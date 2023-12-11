@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3500;
 
 connectDB();
 
-app.use(logger);
+// app.use(logger);
 
 app.use(cors(corsOptions));
 
@@ -42,7 +42,7 @@ app.use('/*', (req, res) => {
     }
 })
 
-app.use(errorHandler);
+// app.use(errorHandler);
 
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB');
