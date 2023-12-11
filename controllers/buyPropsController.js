@@ -1,6 +1,5 @@
 const BuyProps = require('../models/BuyProps');
 const User = require('../models/User');
-const AllProps = require('../models/AllProps');
 const cloudinary = require('../config/cloudinary');
 
 const createBuyProp = async (req, res) => {
@@ -36,12 +35,6 @@ const createBuyProp = async (req, res) => {
             ownerId, title, price, rooms, bathrooms, description, location: {state, town, street},
             option, images: urls, imagesId: urlsId
         });
-
-        await AllProps.create({
-            ownerId, title, price, rooms, bathrooms, description, location: {state, town, street},
-            options: option, images: urls, imagesId: urlsId
-
-        })
 
         if (newProperty) {
             res.status(201).json({ message: 'Property Posted.' });
@@ -137,7 +130,6 @@ const updateBuyProp = async (req, res) => {
 
     try {
         const property = await BuyProps.findById(id);
-        const propAtAllProps = await AllProps.findOne({ title: property.title }).lean();
 
         if (
             !id || !ownerId || !title || !price || !option || !rooms || 
@@ -156,11 +148,6 @@ const updateBuyProp = async (req, res) => {
         property.location.town = town;
         property.location.street = street;
 
-        await AllProps.findByIdAndUpdate(propAtAllProps._id, {
-            title, price, options: option, rooms, bathrooms, description, state, town, 
-            street, }, { new: true }
-        );
-
         const updatedProp = await property.save();
 
         res.status(202).json({ message: `Property '${updatedProp.title}' updated` });
@@ -176,7 +163,6 @@ const updateBuyPropImg = async (req, res) => {
 
     try {
         const property = await BuyProps.findById(id);
-        const propertyAtAllProps = await AllProps.findOne({ title: property.title }).lean();
 
         if (!ownerId) {
             return res.status(401).json({ message: 'Unauthorized' });
@@ -198,12 +184,6 @@ const updateBuyPropImg = async (req, res) => {
         property.images = urls;
         property.imagesId = urlsId;
 
-        propertyAtAllProps.images = urls;
-        propertyAtAllProps.imagesId = urlsId;
-
-        await AllProps.findByIdAndUpdate(propertyAtAllProps._id, { 
-            images: urls, imagesId: urlsId }, { new: true } 
-        );
         const updatedProp = await property.save();
 
         res.status(202).json({ message: `Images of property '${updatedProp.title}' updated` });
@@ -218,7 +198,6 @@ const deleteBuyProp = async (req, res) => {
     
     try {
         const property = await BuyProps.findById(id);
-        const propertyAtAllProps = await AllProps.findOne({ title: property.title });
 
         if (!property) {
             return res.status(404).json({ message: 'Inexistent Property'});
@@ -227,7 +206,6 @@ const deleteBuyProp = async (req, res) => {
         await cloudinary.api.delete_resources(property.imagesId);
 
         const reply = await property.deleteOne();
-        await propertyAtAllProps.deleteOne();
 
         res.status(200).json({ message: `Property '${reply.title}' deleted`});
     } catch (error) {

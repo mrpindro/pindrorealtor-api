@@ -131,6 +131,60 @@ const updateUserImg = async (req, res) => {
     }
 }
 
+const addUserMessages = async (req, res) => {
+    const { id, message, sender } = req.body;
+    try {
+        const user = await User.findById(id);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User Not Found' });
+        }
+
+        if (!message) {
+            return res.status(400).json({ message: "Field can't be empty" })
+        }
+
+        const msgs = {
+            message: message,
+            sender: sender
+        }
+
+        user.messages.push(msgs);
+        const msg = await user.save();
+
+        res.status(200).json(msg);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+const resetPassword = async (req, res) => {
+    // const { id } = req.params;
+    const { id, password } = req.body;
+
+    try {
+        const user = await User.findById(id);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User Not Found' });
+        }
+
+        if (!password) {
+            return res.status(406).json({message: "Password field can't be empty"});
+        }
+
+        const hashedPWD = await bcrypt.hash(password, 10);
+
+        user.password = hashedPWD;
+
+        await user.save();
+
+        res.status(200).json({ message: 'Password updated!' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
 
 const deleteAccount = async (req, res) => {
     const { id } = req.params;
@@ -153,5 +207,6 @@ const deleteAccount = async (req, res) => {
 }
 
 module.exports = {
-    createUser, getUsers, getUserById, updateUser, updateUserImg, deleteAccount
+    createUser, getUsers, getUserById, updateUser, updateUserImg,  
+    addUserMessages, resetPassword, deleteAccount
 }

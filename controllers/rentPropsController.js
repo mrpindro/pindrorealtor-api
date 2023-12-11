@@ -1,6 +1,5 @@
 const RentProps = require('../models/RentProps');
 const User = require('../models/User');
-const AllProps = require('../models/AllProps');
 const cloudinary = require('../config/cloudinary');
 
 const createRentProp = async (req, res) => {
@@ -36,13 +35,6 @@ const createRentProp = async (req, res) => {
             ownerId, title, fee, rooms, bathrooms, description, location: {state, town, street},
             period, images: urls, imagesId: urlsId
         });
-
-        await AllProps.create({
-            ownerId, title, price: fee, rooms, bathrooms, description, 
-            location: {state, town, street},
-            options: period, images: urls, imagesId: urlsId
-
-        })
 
         if (newProperty) {
             res.status(201).json({ message: 'Property Posted.' });
@@ -139,7 +131,6 @@ const updateRentProp = async (req, res) => {
 
     try {
         const property = await RentProps.findById(id);
-        const propAtAllProps = await AllProps.findOne({ title: property.title }).lean();
 
         if (!property) {
             return res.status(404).json({ message: 'No property found' });
@@ -163,7 +154,7 @@ const updateRentProp = async (req, res) => {
         } else if (!period) {
             return res.status(406).json({ message: 'Missing period' });
         } else if (!rooms || !bathrooms) {
-            return res.status(406).json({ message: 'Missing rms and bths' });
+            return res.status(406).json({ message: 'Missing rms or bths' });
         } else if (!description) {
             return res.status(406).json({ message: 'Missing desc' });
         } else if (!state) {
@@ -182,10 +173,6 @@ const updateRentProp = async (req, res) => {
         property.location.town = town;
         property.location.street = street;
 
-        await AllProps.findByIdAndUpdate(propAtAllProps._id, {
-            title, price: fee, options: period, rooms, bathrooms, description, state, town, 
-            street, }, { new: true }
-        );
         const updatedProp = await property.save();
 
         res.status(202).json({ message: `Property '${updatedProp.title}' updated` });
@@ -241,7 +228,6 @@ const deleteRentProp = async (req, res) => {
     
     try {
         const property = await RentProps.findById(id);
-        const propertyAtAllProps = await AllProps.findOne({ title: property.title });
 
         if (!property) {
             return res.status(404).json({ message: 'Inexistent Property'});
@@ -250,7 +236,6 @@ const deleteRentProp = async (req, res) => {
         await cloudinary.api.delete_resources(property.imagesId);
 
         const reply = await property.deleteOne();
-        await propertyAtAllProps.deleteOne();
 
         res.status(200).json({ message: `Property '${reply.title}' deleted`});
     } catch (error) {

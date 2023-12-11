@@ -10,3 +10,4 @@
 12-11-2023	14:59:42	579acf1b-42a8-4b43-b1c1-eae952f28a1e	MulterError: Unexpected field	POST	/buy	http://localhost:3000
 16-11-2023	19:15:12	31b9f177-7a2d-49fe-991c-ebb209bfdc37	Error: Not Allowed By CORS	GET	/rent	null
 16-11-2023	19:15:12	976ef814-3555-4976-8d19-be905ee75c79	Error: Not Allowed By CORS	GET	/buy	null
+06-12-2023	22:26:35	f16b1ea5-f030-4e3e-a871-59a5af55c5cf	MulterError: Unexpected field	POST	/rent	http://localhost:3000

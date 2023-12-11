@@ -8,6 +8,10 @@ const userSchema = new mongoose.Schema({
     imageId: String,
     password: { type: String, required: true, minLength: 4 },
     roles: {type: [String], default:['user']},
+    messages: [{
+        message: String,
+        sender: String
+    }],
 }, {
     timestamps: true
 });

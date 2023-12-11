@@ -8,6 +8,14 @@ router.route('/')
     .post(upload.single('image'), usersController.createUser)
     .patch(usersController.updateUser)
 ;
+
+router.route('/messages')
+    .post(usersController.addUserMessages)
+;
+
+router.route('/reset-password')
+    .patch(usersController.resetPassword)
+;
     
 router.route('/:id')
     .get(usersController.getUserById)

@@ -31,7 +31,6 @@ app.use('/prop-mail', require('./routes/sendPropMail'));
 app.use('/users', require('./routes/users'));
 app.use('/rent', require('./routes/rentProps'));
 app.use('/buy', require('./routes/buyProps'));
-app.use('/props', require('./routes/allProps'));
 
 app.use('/*', (req, res) => {
     if (req.accepts('html')) {
